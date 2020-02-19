@@ -178,18 +178,18 @@ import {ShowBrowseCount,ShowArtCommentCount,showLikeData,GetLike} from '../utils
 
             }
             //查询浏览量最多的10篇文章数据
-            ShowBrowseCount(function(data){
-                // console.log('浏览最多10文章数据',data);
-                that.browseList = data;
-            });
-            //查询文章评论量最大的10篇文章
-            ShowArtCommentCount(function(data){
-                // console.log('评论最多10文章数据',data);
-                that.artCommentList = data;
-            })
-            showLikeData(function(data){
-                that.likeNum = that.initLikeNum = data;
-            })
+            // ShowBrowseCount(function(data){
+            //     // console.log('浏览最多10文章数据',data);
+            //     that.browseList = data;
+            // });
+            // //查询文章评论量最大的10篇文章
+            // ShowArtCommentCount(function(data){
+            //     // console.log('评论最多10文章数据',data);
+            //     that.artCommentList = data;
+            // })
+            // showLikeData(function(data){
+            //     that.likeNum = that.initLikeNum = data;
+            // })
 
         }
     }

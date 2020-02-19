@@ -20,6 +20,7 @@
 						<el-menu-item index="/Friendslink"><i class="fa fa-wa fa-users"></i> 伙伴</el-menu-item>
 						<el-menu-item index="/Message"><i class="fa fa-wa fa-pencil"></i> 留言板</el-menu-item>
 						<el-menu-item index="/Aboutme"><i class="fa fa-wa fa-vcard"></i> 关于</el-menu-item>
+						<el-menu-item index="/BlogEditor"><i class="fa fa-wa fa-vcard"></i> 写博客</el-menu-item>
 						<div index="" class="pcsearchbox">
 							<i class="el-icon-search pcsearchicon"></i>
 							<div class="pcsearchinput" :class="input?'hasSearched':''">
@@ -220,14 +221,14 @@ export default {
 			} else {
 				that.haslogin = false;
 			}
-			ArtClassData(function(msg) { //文章分类
-				// console.log(msg);
-				that.classListObj = msg;
-			})
-			navMenList(function(msg) { //实验室项目列表获取
-				// console.log('实验室',msg);
-				that.projectList = msg;
-			});
+			// ArtClassData(function(msg) { //文章分类
+			// 	// console.log(msg);
+			// 	that.classListObj = msg;
+			// })
+			// navMenList(function(msg) { //实验室项目列表获取
+			// 	// console.log('实验室',msg);
+			// 	that.projectList = msg;
+			// });
 			if ((this.$route.name == "Share" || this.$route.name == "Home") && this.$store.state.keywords) {
 				this.input = this.$store.state.keywords;
 			} else {
@@ -269,17 +270,17 @@ export default {
 		// console.log();
 		this.routeChange();
 		//设置主题
-		changeTheme(function(msg) {
-			// console.log(msg);
-			that.$store.state.themeObj = msg;
+		// changeTheme(function(msg) {
+		// 	// console.log(msg);
+		// 	that.$store.state.themeObj = msg;
 
-			// console.log('主题',that.$store.state.themeObj );
-		});
+		// 	// console.log('主题',that.$store.state.themeObj );
+		// });
 		//关于我的信息
-		AboutMeData(function(msg) {
-			// console.log('关于我',msg);
-			that.$store.state.aboutmeObj = msg
-		})
+		// AboutMeData(function(msg) {
+		// 	// console.log('关于我',msg);
+		// 	that.$store.state.aboutmeObj = msg
+		// })
 	},
 	mounted() { //页面元素加载完成
 		// console.log('是否是慧慧',this.$store.state.themeObj.user_start);

@@ -90,6 +90,14 @@ export default new Router({
 				auth: false
 			},
 			name: 'Login'
+		}, //博客编辑器
+		{
+			path: '/BlogEditor',
+			component: resolve => require(['../pages/BlogEditor.vue'], resolve),
+			meta: {
+				auth: false
+			},
+			name: 'BlogEditor'
 		}, //注册登录
 		{
 			path: '/UserInfo',

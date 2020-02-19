@@ -7,6 +7,10 @@ import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-default/index.css'
 import './assets/css/style.less'
 import store from './store'
+import'../static/ue/ueditor.config.js'
+import'../static/ue/ueditor.all.js'
+import'../static/ue/lang/zh-cn/zh-cn.js'
+import'../static/ue/ueditor.parse.min.js'
 
 Vue.config.productionTip = false
 Vue.use(ElementUI)
