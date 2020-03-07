@@ -1,10 +1,10 @@
 <!-- 文章详情模块 -->
 <template>
         <div class="detailBox tcommonBox" >
-            <span class="s-round-date">
+            <!-- <span class="s-round-date">
                 <span class="month" v-html="showInitDate(detailObj.create_time,'month')+'月'"></span>
                 <span class="day" v-html="showInitDate(detailObj.create_time,'date')"></span>
-            </span>
+            </span> -->
             <header>
                 <h1>
                     <a :href="'#/DetailShare?aid='+detailObj.id" target="_blank">
@@ -12,20 +12,20 @@
                     </a>
                 </h1>
                 <h2>
-                    <i class="fa fa-fw fa-user"></i>发表于 <span >{{create_time}}</span> •
-                    <i class="fa fa-fw fa-eye"></i>{{detailObj.browse_count}} 次围观 •
-                    <i class="fa fa-fw fa-comments"></i>活捉 {{detailObj.comment_count}} 条 •
+                    <i class="fa fa-fw fa-user"></i>发表于 <span >{{createTime}}</span> •
+                    <i class="fa fa-fw fa-eye"></i>{{detailObj.browseCount}} 次围观 •
+                    <i class="fa fa-fw fa-comments"></i>活捉 {{detailObj.commentCount}} 条 •
                     <span class="rateBox">
                         <i class="fa fa-fw fa-heart"></i>{{likeCount}}点赞
                         <i class="fa fa-fw fa-star"></i>{{collectCount}}收藏
                     </span>
                 </h2>
                 <div class="ui label">
-                    <a :href="'#/Share?classId='+detailObj.class_id">{{detailObj.cate_name}}</a>
+                    <a :href="'#/Share?classId='+detailObj.class_id">{{detailObj.cateName}}</a>
                 </div>
             </header>
             <div class="article-content" v-html="detailObj.content"></div>
-            <div class="dshareBox bdsharebuttonbox"  data-tag="share_1">
+            <!-- <div class="dshareBox bdsharebuttonbox"  data-tag="share_1">
                 分享到:
                 <a href="javascript:void(0);" class="ds-weibo fa fa-fw fa-weibo" data-cmd="tsina" ></a>
                 <a href="javascript:void(0);" class="ds-qq fa fa-fw fa-qq" data-cmd="tqq"></a>
@@ -38,7 +38,7 @@
                         <i :class="collectArt?'fa fa-fw fa-star':'fa fa-fw fa-star-o'" ></i>收藏 | {{collectCount}}
                     </div>
                 </div>
-            </div>
+            </div> -->
             <div class="donate">
                 <div class="donate-word">
                     <span @click="pdonate=!pdonate">赞赏</span>
@@ -62,11 +62,12 @@
 </template>
 
 <script>
-import {getArticleInfo,getArtLikeCollect,initDate} from '../utils/server.js'
+import {getArticleInfo,getArtLikeCollect,getArticle,initDate} from '../utils/server.js'
     export default {
         data() { //选项 / 数据
             return {
                 aid:'',//文章ID
+                title:'',//文章标题
                 pdonate:true,//打开赞赏控制,
                 detailObj:'',//返回详情数据
                 likeArt:false,//是否点赞
@@ -132,7 +133,9 @@ import {getArticleInfo,getArtLikeCollect,initDate} from '../utils/server.js'
             },
             routeChange:function(){
                 var that = this;
-                that.aid = that.$route.query.aid==undefined?1:parseInt(that.$route.query.aid);//获取传参的aid
+                // that.aid = that.$route.query.aid==undefined?1:parseInt(that.$route.query.aid);//获取传参的aid
+                console.log("???" + that.$route.query.title);
+                that.title = that.$route.query.title==undefined?'':that.$route.query.title;
                 //判断用户是否存在
                 if(localStorage.getItem('userInfo')){
                     that.haslogin = true;
@@ -143,14 +146,23 @@ import {getArticleInfo,getArtLikeCollect,initDate} from '../utils/server.js'
                     that.haslogin = false;
                 }
                 //获取详情接口
-                getArticleInfo(that.aid,that.userId,function(msg){
-                    // console.log('文章详情',msg);
+                // getArticleInfo(that.aid,that.userId,function(msg){
+                //     // console.log('文章详情',msg);
+                //     that.detailObj = msg;
+                //     that.likeCount = msg.like_count?msg.like_count:0;
+                //     that.collectCount = msg.collect_count?msg.collect_count:0;
+                //     that.likeArt = msg.user_like_start==0?false:true;
+                //     that.collectArt = msg.user_collect_start==0?false:true;
+                //     that.create_time = initDate(that.detailObj.create_time,'all');
+                // })
+                getArticle(that.title,function(msg){
+                    console.log('文章详情',msg);
                     that.detailObj = msg;
                     that.likeCount = msg.like_count?msg.like_count:0;
                     that.collectCount = msg.collect_count?msg.collect_count:0;
                     that.likeArt = msg.user_like_start==0?false:true;
                     that.collectArt = msg.user_collect_start==0?false:true;
-                    that.create_time = initDate(that.detailObj.create_time,'all');
+                    that.createTime = initDate(that.detailObj.createTime,'all');
                 })
             }
         },

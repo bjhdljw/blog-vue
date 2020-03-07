@@ -2,20 +2,20 @@
 <template>
     <el-row class="sharelistBox">
         <div v-if="this.$route.name=='Share'&&!this.$route.query.keywords" class="shareTitle">
-            <div class="ui label" >
+            <!-- <div class="ui label" >
                 <a  :href="'#/Share?classId='+classId">{{className}}</a>
-            </div>
-            <ul v-if="sonclassList" class="shareclassTwo" >
+            </div> -->
+            <!-- <ul v-if="sonclassList" class="shareclassTwo" >
                 <li v-for="(citem,index) in sonclassList">
                     <a :href="'#/Share?classId='+classId+'&classtwoId='+citem.class_id" :class="citem.class_id==classtwoId?'active':''">{{citem.cate_name}}</a>
                 </li>
-            </ul>
+            </ul> -->
         </div>
         <el-col :span="24" class="s-item tcommonBox" v-for="(item,index) in articleList" :key="'article'+index">
-            <span class="s-round-date">
-                <span class="month" v-html="showInitDate(item.create_time,'month')+'月'"></span>
-                <span class="day" v-html="showInitDate(item.create_time,'date')"></span>
-            </span>
+            <!-- <span class="s-round-date">
+                <span class="month" v-html="showInitDate(item.createTime,'month')+'月'"></span>
+                <span class="day" v-html="showInitDate(item.createTime,'date')"></span>
+            </span> -->
             <header>
                 <h1>
                     <a :href="'#/DetailShare?aid='+item.id" target="_blank">
@@ -24,16 +24,16 @@
                 </h1>
                 <h2>
                     <i class="fa fa-fw fa-user"></i>发表于
-                    <i class="fa fa-fw fa-clock-o"></i><span v-html="showInitDate(item.create_time,'all')">{{showInitDate(item.create_time,'all')}}</span> •
-                    <i class="fa fa-fw fa-eye"></i>{{item.browse_count}} 次围观 •
-                    <i class="fa fa-fw fa-comments"></i>活捉 {{item.comment_count}} 条 •
+                    <i class="fa fa-fw fa-clock-o"></i><span v-html="showInitDate(item.createTime,'all')">{{showInitDate(item.createTime,'all')}}</span> •
+                    <i class="fa fa-fw fa-eye"></i>{{item.browseCount}} 次围观 •
+                    <i class="fa fa-fw fa-comments"></i>活捉 {{item.commentCount}} 条 •
                     <span class="rateBox">
                         <i class="fa fa-fw fa-heart"></i>{{item.like_count?item.like_count:0}}点赞 •
                         <i class="fa fa-fw fa-star"></i>{{item.collect_count?item.collect_count:0}}收藏
                     </span>
                 </h2>
                 <div class="ui label">
-                    <a :href="'#/Share?classId='+item.class_id">{{item.cate_name}}</a>
+                    <a :href="'#/Share?classId='+item.class_id">{{item.cateName}}</a>
                 </div>
             </header>
             <div class="article-content">
@@ -45,7 +45,7 @@
                 </p>
             </div>
             <div class="viewdetail">
-                <a class="tcolors-bg" :href="'#/DetailShare?aid='+item.id" target="_blank">
+                <a class="tcolors-bg" :href="'#/DetailShare?title='+item.title" target="_blank">
                     阅读全文>>
                 </a>
             </div>
@@ -58,7 +58,7 @@
 </template>
 
 <script>
-import {ShowArticleAll,ArtClassData,initDate} from '../utils/server.js'
+import {ShowArticleAll,ArtClassData,initDate, listBlog} from '../utils/server.js'
     export default {
         name:'Share',
         data() { //选项 / 数据
@@ -93,7 +93,7 @@ import {ShowArticleAll,ArtClassData,initDate} from '../utils/server.js'
 
         methods: { //事件处理器
             showInitDate: function(oldDate,full){
-                // console.log(oldDate,full);
+                console.log(oldDate,full);
                 return initDate(oldDate,full)
             },
             showSearchShowList:function(initpage){//展示数据
@@ -104,14 +104,14 @@ import {ShowArticleAll,ArtClassData,initDate} from '../utils/server.js'
                 that.sendId = that.classtwoId?that.classtwoId:that.classId;
                 that.level = that.keywords ? 0 : that.classtwoId?0:1;
                 // console.log(that.classId);
-                ArtClassData(function(msg){
-                    // console.log(msg);
-                    that.shareClass = msg;
-                })
+                // ArtClassData(function(msg){
+                //     // console.log(msg);
+                //     that.shareClass = msg;
+                // })
                 //判断当前显示的分类名称 以及子分类
                 for(var i=0;i<that.shareClass.length;i++){
                     if(that.classId==that.shareClass[i].class_id){
-                        that.className = that.shareClass[i].cate_name;
+                        that.className = that.shareClass[i].cateName;
                         if(that.shareClass[i].ChildsSon&&that.shareClass[i].ChildsSon.length>0){
                             that.sonclassList = that.shareClass[i].ChildsSon;
                         }else{
@@ -121,22 +121,35 @@ import {ShowArticleAll,ArtClassData,initDate} from '../utils/server.js'
                 }
                 //初始化 文章id为0开始
                 that.artId = initpage ? 0 : that.artId;
-                ShowArticleAll(that.artId,that.sendId,that.keywords,that.level,(result)=>{
+                // ShowArticleAll(that.artId,that.sendId,that.keywords,that.level,(result)=>{
+                //     // console.log(result);
+                //     if(result.code==1001){
+                //         var msg = result.data;
+                //         if(msg.length>0&&msg.length<10){
+                //             that.hasMore = false
+                //         }else{
+                //             that.hasMore = true;
+                //         }
+                //         that.articleList = initpage ? msg : that.articleList.concat(msg);
+                //         that.artId = msg[msg.length-1].id;
+                //         // console.log(that.artId);
+                //     }else{
+                //         that.hasMore = false;
+                //         that.articleList = initpage ? [] : that.articleList;
+                //     }
+                // })
+                listBlog((result)=>{
+                    console.log(result);
+                    console.log(result.length);
                     // console.log(result);
-                    if(result.code==1001){
-                        var msg = result.data;
-                        if(msg.length>0&&msg.length<10){
-                            that.hasMore = false
-                        }else{
-                            that.hasMore = true;
-                        }
-                        that.articleList = initpage ? msg : that.articleList.concat(msg);
-                        that.artId = msg[msg.length-1].id;
-                        // console.log(that.artId);
+                    var msg = result;
+                    if(msg.length>0&&msg.length<10){
+                        that.hasMore = false
                     }else{
-                        that.hasMore = false;
-                        that.articleList = initpage ? [] : that.articleList;
+                        that.hasMore = true;
                     }
+                    that.articleList = initpage ? msg : that.articleList.concat(msg);
+                    that.artId = msg[msg.length-1].id;
                 })
             },
             addMoreFun:function(){//查看更多

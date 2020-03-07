@@ -26,6 +26,9 @@ import header from '../components/header.vue'
 import footer from '../components/footer.vue'
 import temRightlist from '../components/temRightlist.vue'
 import Ueditor from "../components/ueditor";
+import {
+	addBlog
+} from '../utils/server.js'
 export default {
   data() {
     return {
@@ -60,6 +63,10 @@ export default {
       console.log(this.title);
       console.log(this.dat.content);
       console.log(this.tagId);
+      let data = {"title":this.title, "content":this.dat.content, "classId":this.tagId};
+      addBlog(data, function(msg) {
+
+      })
     },
     showContent() {
       this.show = !this.show;

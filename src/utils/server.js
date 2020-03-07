@@ -2,7 +2,8 @@ import Vue from 'vue'
 import axios from 'axios'
 //公共路径
 // let portUrl = "http://www.mangoya.cn/port/";
-let portUrl = "http://"+window.location.host+"/port/";
+// let portUrl = "http://"+window.location.host+"/port/";
+let portUrl = "http://localhost:8083/api/";
 
 //用户注册
 const getRegister = (username,password,email,callback) =>{
@@ -290,10 +291,12 @@ const UserInfoSave = (obj,callback) =>{
 
 //初始化时间
 const initDate = (oldDate,full) => {
+    console.log(oldDate);
     var odate = new Date(oldDate);
     var year =  odate.getFullYear();
     var month = odate.getMonth()<9? '0' + (odate.getMonth()+1) : odate.getMonth()+1;
     var date = odate.getDate()<10? '0'+odate.getDate() : odate.getDate();
+    return year+'年'+month+'月'+date+'日';
     if(full=='all'){
         var t = oldDate.split(" ")[0];
         // console.log(oldDate,t.split('-')[0],t.split('-')[1],t.split('-')[2]);
@@ -327,6 +330,29 @@ const changeTheme = (callback) => {
     }
 }
 
+const addBlog = (data, callback) => {
+    // let data = {"code":"1234","name":"yyyy"};
+    let url = portUrl + 'blogController/addBlog';
+    axios.post(url, data).then(num => {
+    })
+}
+
+const getArticle = (title, callback) => {
+    let json = {"title": title};
+    let url = portUrl + 'blogController/getBlogByTitle';
+    axios.post(url, json).then(num => {
+        callback && callback(num.data.data);
+    })
+}
+
+//查询文章列表
+const listBlog = (callback) =>{
+    var url = portUrl + 'blogController/listBlog';
+    axios.get(url).then(num => {
+        callback && callback(num.data.data);
+    })
+}
+
 export {
         getRegister,//注册
         UserLogin,//登录
@@ -352,4 +378,7 @@ export {
         UserInfoSave,//修改用户信息
         initDate,//设置时间
         changeTheme,//获取主题信息
+        addBlog,//新建博客
+        getArticle,//获取博客详情
+        listBlog,//博客列表页
     }
