@@ -331,7 +331,6 @@ const changeTheme = (callback) => {
 }
 
 const addBlog = (data, callback) => {
-    // let data = {"code":"1234","name":"yyyy"};
     let url = portUrl + 'blogController/addBlog';
     axios.post(url, data).then(num => {
     })
@@ -350,6 +349,33 @@ const listBlog = (callback) =>{
     var url = portUrl + 'blogController/listBlog';
     axios.get(url).then(num => {
         callback && callback(num.data.data);
+    })
+}
+
+//获取公钥接口
+const getPublicKey = (userName, callback) => {
+    let data = {"userName":userName};
+    let url = portUrl + 'userController/getPublicKey';
+    axios.post(url, data).then(res => {
+        callback && callback(res.data.data);
+    })
+}
+
+//设置对称密钥
+const setKey = (userName, key, callback) => {
+    let data = {"userName":userName, "key":key};
+    let url = portUrl + 'userController/setKey';
+    axios.post(url, data).then(res => {
+        callback && callback(res.data.data);
+    })
+}
+
+//注册
+const register = (userName, password, mail, callback) => {
+    let data = {"userName":userName, "password":password, "mail":mail};
+    let url = portUrl + 'userController/register';
+    axios.post(url, data).then(res => {
+        callback && callback(res.data);
     })
 }
 
@@ -381,4 +407,7 @@ export {
         addBlog,//新建博客
         getArticle,//获取博客详情
         listBlog,//博客列表页
+        getPublicKey,//获取公钥
+        setKey,//设置对称密钥
+        register,//注册
     }

@@ -137,7 +137,9 @@
 </template>
 
 <script>
-import {getRegister,UserLogin} from '../utils/server.js'
+import {getRegister,UserLogin,getPublicKey,setKey,register} from '../utils/server.js'
+import {JSEncrypt} from 'jsencrypt'
+import CryptoJS from 'crypto-js'
     export default {
         name: 'Login',
         data() { //选项 / 数据
@@ -164,6 +166,10 @@ import {getRegister,UserLogin} from '../utils/server.js'
                 step: 1,//注册进度
                 fullscreenLoading: false,//全屏loading
                 urlstate: 0,//重新注册
+                publicKey: '',//公钥
+                encryptedUuid: '',//使用RSA加密的对称密钥
+                encryptedPass:'',//使用RSA加密的密码
+                uuid:'',//AES对称密钥
             }
         },
         methods: { //事件处理器
@@ -182,6 +188,13 @@ import {getRegister,UserLogin} from '../utils/server.js'
                     that.err2005 = true;
                     that.step = 1;
                 }
+            },
+            getUuid:function() {
+                return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+                    var r = Math.random() * 16 | 0,
+                        v = c == 'x' ? r : (r & 0x3 | 0x8);
+                    return v.toString(16)
+                });
             },
             loginEnterFun: function(e){
                 var keyCode = window.event? e.keyCode:e.which;
@@ -254,35 +267,44 @@ import {getRegister,UserLogin} from '../utils/server.js'
                 }else{
                     that.nemailErr = true;
                 }
-                if(that.npassword&&preg.test(that.npassword)){
-                    that.npasswordErr = false;
-                    if(that.npassword==that.npassword2){
-                        that.npassword2Err = false;
-                    }else{
-                        that.npassword2Err = true;
-                    }
-                }else{
-                    that.npasswordErr = true;
-                }
                 if(!that.nusernameErr&&!that.nemailErr&&!that.npasswordErr){
                     that.fullscreenLoading = true;
-                    getRegister(that.nusername,that.npassword,that.nemail,function(msg){
-                        if(msg.code==1010){//注册成功
-                            var timer = setTimeout(function(){//注册中
+                    getPublicKey(that.nusername,function(msg){
+                        console.log(msg);
+                        that.publicKey = msg;
+                            var encrypt = new JSEncrypt();
+                            encrypt.setPublicKey(that.publicKey);
+                            var uuid36 = that.getUuid();
+                            var uuid32 = uuid36.replace(/-/g, "");
+                            var uuid = uuid32.substring(0, 16);
+                            that.uuid = uuid;
+                            that.encryptedUuid = encrypt.encrypt(uuid);
+                            that.encryptedPass = encrypt.encrypt(that.npassword);
+                            console.log('对称密钥:%o', uuid);
+                        setKey(that.nusername, that.encryptedUuid, function(msg){
+                            let key = CryptoJS.enc.Utf8.parse(that.uuid)
+                            let srcs = CryptoJS.enc.Utf8.parse(that.npassword);
+                            let encrypted = CryptoJS.AES.encrypt(srcs, key, {mode: CryptoJS.mode.ECB, padding: CryptoJS.pad.Pkcs7});
+                            register(that.nusername, encrypted.toString(), that.nemail, function(msg){
+                                console.log('msg:&o', msg);
+                                if(msg.code==1){//注册成功
+                                    var timer = setTimeout(function(){//注册中
+                                    that.fullscreenLoading = false;
+                                    that.err2005 = true;
+                                    that.step = 1;
+                                    clearTimeout(timer);
+                                },3000)
+                            }else if(msg.code==2002){//该邮箱已注册
                                 that.fullscreenLoading = false;
-                                that.err2005 = true;
-                                that.step = 1;
-                                clearTimeout(timer);
-                            },3000)
-                        }else if(msg.code==2002){//该邮箱已注册
-                            that.fullscreenLoading = false;
-                            that.registerErr = true;
-                            that.registerTitle = '该邮箱已注册,可直接登录';
-                        }else{
-                            that.fullscreenLoading = false;
-                            that.registerErr = true;
-                            that.registerTitle = '注册失败';
-                        }
+                                that.registerErr = true;
+                                that.registerTitle = '该邮箱已注册,可直接登录';
+                            }else{
+                                that.fullscreenLoading = false;
+                                that.registerErr = true;
+                                that.registerTitle = '注册失败';
+                            }
+                            })
+                        })
                     })
                 }
             },

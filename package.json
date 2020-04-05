@@ -11,7 +11,9 @@
   },
   "dependencies": {
     "axios": "^0.17.0",
+    "crypto-js": "^4.0.0",
     "element-ui": "^1.4.12",
+    "jsencrypt": "^3.0.0-rc.1",
     "kindeditor": "^4.1.10",
     "vue": "^2.5.2",
     "vue-router": "^3.0.1",
